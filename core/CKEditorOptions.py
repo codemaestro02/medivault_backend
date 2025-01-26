@@ -90,3 +90,7 @@ CKEDITOR_5_CONFIG_TYPES_ALL = {
 
 # Define a constant in settings.py to specify file upload permissions
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"  # Possible values: "staff", "authenticated", "any"
+# Define a constant in settings.py to specify file upload max size
+CKEDITOR_5_FILE_UPLOAD_MAX_SIZE = 5242880  # 5MB
+# Define a constant in settings.py to specify file upload types
+

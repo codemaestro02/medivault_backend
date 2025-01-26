@@ -13,14 +13,16 @@ from users.models import HealthPersonnel
 
 class Patient(models.Model):
     """Enhanced patient model with comprehensive medical information"""
-    rfid_id = models.CharField(max_length=24, unique=True)
+    rfid_id = models.AutoField(primary_key=True)
     administrative_data = models.OneToOneField(AdministrativeData, on_delete=models.CASCADE, related_name='patient')
     medical_data = models.OneToOneField(MedicalData, on_delete=models.CASCADE, related_name='patient')
     insurance_info = models.JSONField()
+    # for admission
     is_active = models.BooleanField(default=True)
     inactive_reason = CKEditor5Field(config_name='default')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # for archiving
     is_hidden = models.BooleanField(default=False)
 
     objects = models.Manager()
@@ -33,16 +35,18 @@ class Patient(models.Model):
                                     examination_ward=examination_ward)
         self.save()
 
-    # def discharge(self):
-    #     self.is_active = False
-    #     self.medical_records.last().discharge_date = timezone.now()
-    #     self.modical_records.last().is_opened = False
-    #     last_record = json.loads(self.medical_records.last().insurance_info)
-    #     self.medical_data.medical_history.append(last_record)
-    #     self.medical_records.last().save()
-    #     self.save()
+    def discharge(self):
+        self.is_active = False
+        self.medical_records.last().discharge_date = timezone.now()
+        self.modical_records.last().is_opened = False
+        last_record = json.loads(self.medical_records.last())
+        self.medical_data.medical_history.append(last_record)
+        self.medical_records.last().save()
+        self.save()
 
     def save(self, *args, **kwargs):
+        self.administrative_data.mrn = f"PAT{self.rfid_id}"
+        self.administrative_data.save()
         super(Patient, self).save(*args, **kwargs)
 
 

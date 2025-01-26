@@ -11,8 +11,8 @@ from .models import Patient, Consent
 
 class PatientSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='patient-detail')
-    administrative_data = AdministrativeDataSerializer(many=False, read_only=True)
-    medical_data = MedicalDataSerializer(many=False, read_only=True)
+    administrative_data = AdministrativeDataSerializer(many=False)
+    medical_data = MedicalDataSerializer(many=False)
 
     class Meta:
         model = Patient
@@ -31,13 +31,25 @@ class PatientSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError('Invalid MRN format')
         return value.upper()
 
+    def create(self, validated_data):
+        """Create a new patient record"""
+        administrative_data = validated_data.pop("administrative_data")
+
+        medical_data = validated_data.pop("medical_data")
+        medical_data = MedicalData.objects.create(**medical_data)
+        patient = Patient.objects.create(medical_data=medical_data, administrative_data=administrative_data,
+                                         **validated_data)
+        # MedicalData.objects.create(patient=patient, **medical_data)
+        # AdministrativeData.objects.create(patient=patient, mrn=f"PAT{patient.rfid_id}", **administrative_data)
+        return patient
+
 
 class ConsentSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='consent-detail')
     patient = serializers.HyperlinkedRelatedField(view_name='patient-detail',
                                                   queryset=Patient.objects.filter(is_hidden=False))
     granted_to = serializers.HyperlinkedRelatedField(view_name='health-personnel-detail',
-                                                     queryset=HealthPersonnel.objects.filter(is_hidden=False,
+                                                     queryset=HealthPersonnel.objects.filter(is_active=True,
                                                                                              is_on_duty=True))
 
     class Meta:

@@ -11,9 +11,9 @@ router.register(r'healthpersonnel', HealthPersonnelViewSet, basename='healthpers
 router.register(r'healthpersonnel/archive', HealthPersonnelArchiveRestoreViewSet, basename='healthpersonnel-archive')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/personnel/register', AdministratorRegisterView.as_view(), name='personnel-register'),
-    path('api/personnel/login/', HealthPersonnelLoginView.as_view(), name='personnel_login'),
-    path('api/admin/login/', AdministratorLoginView.as_view(), name='admin_login'),
-    path('api/admin/register/', AdministratorRegisterView.as_view(), name='admin_register'),
+    path('', include(router.urls)),
+    path('healthpersonnel/register', AdministratorRegisterView.as_view(), name='personnel-register'),
+    path('healthpersonnel/login/', HealthPersonnelLoginView.as_view(), name='personnel_login'),
+    path('admin/login/', AdministratorLoginView.as_view(), name='admin_login'),
+    path('admin/register/', AdministratorRegisterView.as_view(), name='admin_register'),
 ]

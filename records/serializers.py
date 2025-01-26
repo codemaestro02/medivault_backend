@@ -9,6 +9,7 @@ class AdministrativeDataSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AdministrativeData
         fields = "__all__"
+        # exclude = ['mrn']
 
 
 class MedicalDataSerializer(serializers.HyperlinkedModelSerializer):

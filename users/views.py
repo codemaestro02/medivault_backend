@@ -198,7 +198,8 @@ class HealthPersonnelArchiveRestoreViewSet(ArchiveRestoreListDetailViewSet):
     permission_classes = [IsAuthenticated]
 
 
-class HealthPersonnelViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet):
+class HealthPersonnelViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                             mixins.UpdateModelMixin, GenericViewSet):
     serializer_class = HealthPersonnelSerializer
     queryset = HealthPersonnel.objects.filter(is_active=True)
     permission_classes = [IsAuthenticated]
